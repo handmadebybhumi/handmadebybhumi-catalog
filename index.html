@@ -45,10 +45,10 @@ const GOOGLE_SHEET_CSV_URL = "PASTE_PUBLISHED_GOOGLE_SHEET_CSV_URL_HERE";
 const SHEET_REFRESH_MS = 30000;
 function parseCatalogueCSV(text){
  const rows=[];let row=[],field="",quoted=false;
- for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){field+='"';i++}else if(c==='"')quoted=false;else field+=c}else if(c==='"')quoted=true;else if(c===","){row.push(field);field=""}else if(c==="\\n"){row.push(field.replace(/\\r$/,""));if(row.some(v=>v.trim()))rows.push(row);row=[];field=""}else field+=c}
- row.push(field.replace(/\\r$/,""));if(row.some(v=>v.trim()))rows.push(row);
+ for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){field+='"';i++}else if(c==='"')quoted=false;else field+=c}else if(c==='"')quoted=true;else if(c===","){row.push(field);field=""}else if(c==="\n"){row.push(field.replace(/\r$/,""));if(row.some(v=>v.trim()))rows.push(row);row=[];field=""}else field+=c}
+ row.push(field.replace(/\r$/,""));if(row.some(v=>v.trim()))rows.push(row);
  if(rows.length<2)throw Error("The published sheet is empty or unreadable.");
- const headers=rows.shift().map(h=>h.trim().replace(/^\\uFEFF/,"").toLowerCase());
+ const headers=rows.shift().map(h=>h.trim().replace(/^\uFEFF/,"").toLowerCase());
  const required=["product_id","name","category","variant","price","image_url"];
  for(const key of required)if(!headers.includes(key))throw Error("Missing required sheet column: "+key);
  return rows.map(cells=>Object.fromEntries(headers.map((h,j)=>[h,(cells[j]||"").trim()])));
@@ -60,7 +60,7 @@ function sheetRowsToProducts(rows){
   if(r.active&&["false","no","0","inactive"].includes(r.active.toLowerCase()))continue;
   const price=Number(r.price);if(!Number.isFinite(price)||price<0)continue;
   const images=[r.image_url,...(r.gallery_urls||"").split(";")].map(x=>x.trim()).filter(Boolean);
-  if(!images.length||images.some(u=>!/^https:\\/\\//i.test(u)))continue;
+  if(!images.length||images.some(u=>!/^https:\/\//i.test(u)))continue;
   if(!groups.has(r.product_id))groups.set(r.product_id,{id:r.product_id,name:r.name,category:r.category,description:r.description||"",tag:r.tag||"Made with love",images:[],variants:[]});
   const p=groups.get(r.product_id);
   for(const url of images)if(!p.images.includes(url))p.images.push(url);
