@@ -137,6 +137,24 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  html{scroll-behavior:auto}
  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* Mobile cart access and vertically centred dialogs */
+@media(max-width:650px){
+ .modal-backdrop,.custom-backdrop{align-items:center!important;justify-content:center!important;padding:12px!important}
+ .modal,.custom-panel{max-height:calc(100dvh - 24px)!important;max-height:calc(100vh - 24px)!important;overflow-y:auto;overscroll-behavior:contain}
+ .modal{grid-template-columns:minmax(0,1fr)!important;border-radius:22px!important}
+ .modal-img{height:clamp(150px,27dvh,230px)!important;min-height:0!important}
+ .modal-info{padding:18px 18px 22px!important}
+ .modal-info h2{font-size:24px!important}
+ .custom-panel{align-self:center!important}
+ body{padding-bottom:env(safe-area-inset-bottom)}
+}
+@media(max-width:380px){
+ .modal-backdrop,.custom-backdrop{padding:8px!important}
+ .modal,.custom-panel{max-height:calc(100dvh - 16px)!important;max-height:calc(100vh - 16px)!important}
+ .modal-img{height:clamp(130px,23dvh,190px)!important}
+ .modal-info{padding:15px!important}
+}
 </style>
 </head>
 <body>
@@ -236,8 +254,8 @@ root.innerHTML=cart.map((x,i)=>'<article class="cart-line"><img src="'+x.image+'
 root.querySelectorAll("[data-note]").forEach(t=>{t.value=cart[Number(t.dataset.note)].note;t.oninput=()=>{cart[Number(t.dataset.note)].note=t.value}});
 root.querySelectorAll("[data-qty]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.index);cart[i].qty+=Number(b.dataset.qty);if(cart[i].qty<1)cart.splice(i,1);renderCart()});
 root.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.remove),1);renderCart()});
-const total=cart.reduce((n,x)=>n+x.qty*x.price,0);footer.innerHTML='<div class="cart-total"><span>Estimated total</span><span>'+money(total)+'</span></div><p class="cart-help">Delivery charges are extra and are not included in this estimate. Bhumi will confirm delivery cost before you finalise your order.</p><button class="cart-share" id="sendOrder">♡ Copy my order & open Instagram</button><button class="cart-secondary" id="copyOnly">Copy order summary</button><p class="cart-help">This is a request, not a paid order. Bhumi will confirm availability, custom pricing and delivery with you in Instagram messages.</p>';$("#sendOrder").onclick=()=>shareOrder(true);$("#copyOnly").onclick=()=>shareOrder(false)}
-function orderSummary(){return "Hi Bhumi! ♡ I'd love to ask about these handmade goodies:\n\n"+cart.map((x,i)=>(i+1)+". "+x.name+" — "+x.variant+" × "+x.qty+" = "+money(x.price*x.qty)+(x.note?"\n   Custom details: "+x.note:"")).join("\n\n")+"\n\nEstimated total: "+money(cart.reduce((n,x)=>n+x.qty*x.price,0))+"\n\nCould you let me know availability, final pricing and delivery options? Thank you!"}
+const total=cart.reduce((n,x)=>n+x.qty*x.price,0);footer.innerHTML='<div class="cart-total"><span>Estimated total</span><span>'+money(total)+'</span></div><p class="cart-help">Delivery charges are extra and are not included in this estimate. Bhumi will confirm delivery cost before you finalise your order.</p><button class="cart-share" id="sendOrder">♡ Copy my order & open Instagram</button><button class="cart-secondary" id="copyOnly">Copy order summary</button><p class="cart-help">This is a request, not a confirmed order. Every piece is subject to availability. If your chosen item or custom idea is possible, Bhumi will do her best to make it for you and confirm pricing and delivery in Instagram messages.</p>';$("#sendOrder").onclick=()=>shareOrder(true);$("#copyOnly").onclick=()=>shareOrder(false)}
+function orderSummary(){return "Hi Bhumi! ♡ I'd love to ask about these handmade goodies:\n\n"+cart.map((x,i)=>(i+1)+". "+x.name+" — "+x.variant+" × "+x.qty+" = "+money(x.price*x.qty)+(x.note?"\n   Custom details: "+x.note:"")).join("\n\n")+"\n\nEstimated total: "+money(cart.reduce((n,x)=>n+x.qty*x.price,0))+"\n\nI understand this request is subject to availability. If possible, I’d love for you to make it — please let me know the final price and delivery options. Thank you!"}
 async function shareOrder(openInstagram){const summary=orderSummary();let copied=false;try{await navigator.clipboard.writeText(summary);copied=true}catch(e){}if(!copied){window.prompt(openInstagram?"Copy your order summary, then paste it into Instagram:":"Copy your order summary:",summary)}else if(openInstagram){alert("Your order summary is copied. Instagram will open next — paste it into your message to Bhumi.");}else{showBagToast("♡ Order summary copied — ready to paste anywhere!")}if(openInstagram)window.open("https://www.instagram.com/handmade.by.bhumi/","_blank","noopener")}
 const categoryLabels={"All":"All the goodies","Flowers & Bouquets":"Flower Shop","Accessories":"Accessories","Home & Decor":"Soft Toys","Gift Sets":"Gifts","Custom Orders":"Custom Orders"};
 function selectCategory(category){selectedCategory=categories.includes(category)?category:"All";const filter=$("#categoryFilter");if(filter)filter.value=selectedCategory;renderCategories();renderProducts()}
