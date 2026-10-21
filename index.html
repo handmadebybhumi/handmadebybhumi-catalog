@@ -156,8 +156,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
  .modal-info{padding:15px!important}
 }
 
-/* Keep add-to-bag feedback visible and provide a persistent mobile bag shortcut */
-.mobile-bag-shortcut{display:none}
+/* Keep add-to-bag feedback and the persistent bag shortcut visible on every device */
+.mobile-bag-shortcut{position:fixed;z-index:40;left:50%;bottom:14px;transform:translateX(-50%);width:min(320px,calc(100vw - 28px));display:flex;align-items:center;justify-content:center;gap:9px;min-height:50px;padding:12px 18px;border:1px solid #654b3c;border-radius:999px;background:#654b3c;color:#fffdf8;font-size:14px;font-weight:700;box-shadow:0 8px 28px #33251d2b;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
+.mobile-bag-shortcut:active{transform:translateX(-50%) scale(.98)}
+.mobile-bag-shortcut .cart-count{background:#f6d8cf;color:#654b3c}
+.bag-toast{bottom:76px!important;z-index:60}
 @media(max-width:900px){
  .modal-backdrop{align-items:center!important;justify-content:center!important;padding:12px!important}
  .modal-backdrop .modal{width:min(100%,620px);max-height:calc(100dvh - 24px)!important;max-height:calc(100vh - 24px)!important;overflow-y:auto;grid-template-columns:minmax(0,1fr)!important;align-self:center!important}
@@ -170,10 +173,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 }
 @media(max-width:650px){
  body{padding-bottom:calc(76px + env(safe-area-inset-bottom))!important}
- .mobile-bag-shortcut{position:fixed;z-index:40;left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:center;gap:9px;min-height:50px;padding:12px 18px;border:1px solid #654b3c;border-radius:999px;background:#654b3c;color:#fffdf8;font-size:14px;font-weight:700;box-shadow:0 8px 28px #33251d2b;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
+ .mobile-bag-shortcut{left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));width:auto;transform:none}
  .mobile-bag-shortcut:active{transform:scale(.98)}
- .mobile-bag-shortcut .cart-count{background:#f6d8cf;color:#654b3c}
- .bag-toast{bottom:calc(76px + env(safe-area-inset-bottom));z-index:60}
+ .bag-toast{bottom:calc(76px + env(safe-area-inset-bottom))!important}
  .modal-backdrop,.custom-backdrop{padding:10px!important}
  .modal-backdrop .modal{max-height:calc(100dvh - 20px)!important;max-height:calc(100vh - 20px)!important;border-radius:20px!important}
  .modal-backdrop .modal-img{height:clamp(135px,23dvh,200px)!important}
